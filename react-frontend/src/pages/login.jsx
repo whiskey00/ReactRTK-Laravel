@@ -61,6 +61,14 @@ const login = () => {
 			<Container maxWidth="xs">
 				<Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
 					<Typography
+						variant="h3"
+						align="center"
+						gutterBottom
+						sx={{ color: "text.primary" }}
+					>
+						CRUD
+					</Typography>
+					<Typography
 						variant="h5"
 						align="center"
 						gutterBottom
