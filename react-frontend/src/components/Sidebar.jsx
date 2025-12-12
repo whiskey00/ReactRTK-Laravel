@@ -13,6 +13,7 @@ import {
     Avatar,
     useTheme,
     useMediaQuery,
+    CircularProgress,
 } from "@mui/material";
 import {
     Menu as MenuIcon,
@@ -34,7 +35,7 @@ const Sidebar = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
     const [mobileOpen, setMobileOpen] = useState(false);
-    const [logout] = useLogoutMutation();
+    const [logout, { isLoading }] = useLogoutMutation();
     const navigate = useNavigate();
     const user = useSelector(selectCurrentUser);
 
@@ -68,7 +69,7 @@ const Sidebar = () => {
                 color: "white",
             }}
         >
-            {/* Header */}
+
             <Box
                 sx={{
                     p: 2.5,
@@ -89,7 +90,7 @@ const Sidebar = () => {
 
             <Divider sx={{ bgcolor: "rgba(255, 255, 255, 0.12)" }} />
 
-            {/* User Info */}
+
             <Box sx={{ p: 2.5, display: "flex", alignItems: "center", gap: 2 }}>
                 <Avatar
                     sx={{
@@ -117,7 +118,7 @@ const Sidebar = () => {
 
             <Divider sx={{ bgcolor: "rgba(255, 255, 255, 0.12)" }} />
 
-            {/* Navigation Menu */}
+
             <List sx={{ flexGrow: 1, pt: 2 }}>
                 {menuItems.map((item) => (
                     <ListItem key={item.text} disablePadding sx={{ px: 1.5, mb: 0.5 }}>
@@ -149,21 +150,25 @@ const Sidebar = () => {
 
             <Divider sx={{ bgcolor: "rgba(255, 255, 255, 0.12)" }} />
 
-            {/* Logout */}
+
             <List sx={{ pb: 2 }}>
                 <ListItem disablePadding sx={{ px: 1.5 }}>
                     <ListItemButton
                         onClick={handleLogout}
+                        disabled={isLoading}
                         sx={{
                             borderRadius: 2,
                             color: "white",
                             "&:hover": {
                                 bgcolor: "rgba(255, 255, 255, 0.1)",
                             },
+                            "&.Mui-disabled": {
+                                color: "rgba(255, 255, 255, 0.5)",
+                            },
                         }}
                     >
                         <ListItemIcon sx={{ color: "white", minWidth: 40 }}>
-                            <LogoutIcon />
+                            {isLoading ? <CircularProgress size={20} sx={{ color: "white" }} /> : <LogoutIcon />}
                         </ListItemIcon>
                         <ListItemText primary="Logout" />
                     </ListItemButton>
@@ -174,7 +179,7 @@ const Sidebar = () => {
 
     return (
         <Box sx={{ display: "flex" }}>
-            {/* Mobile Menu Button */}
+
             {isMobile && (
                 <IconButton
                     color="inherit"
@@ -197,13 +202,13 @@ const Sidebar = () => {
                 </IconButton>
             )}
 
-            {/* Mobile Drawer */}
+
             <Drawer
                 variant="temporary"
                 open={mobileOpen}
                 onClose={handleDrawerToggle}
                 ModalProps={{
-                    keepMounted: true, // Better mobile performance
+                    keepMounted: true,
                 }}
                 sx={{
                     display: { xs: "block", md: "none" },
@@ -217,7 +222,7 @@ const Sidebar = () => {
                 {drawerContent}
             </Drawer>
 
-            {/* Desktop Drawer */}
+
             <Drawer
                 variant="permanent"
                 sx={{

@@ -25,7 +25,9 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 
 export const apiSlice = createApi({
 	baseQuery: baseQueryWithReauth,
+	tagTypes: ["Auth", "Products"],
 	endpoints: (builder) => ({
+		// Auth endpoints
 		login: builder.mutation({
 			query: (credentials) => ({
 				url: "/login",
@@ -62,9 +64,58 @@ export const apiSlice = createApi({
 				}
 			},
 		}),
+
+		// Product endpoints
+		getProducts: builder.query({
+			query: (page = 1) => `/products?page=${page}`,
+			providesTags: (result) =>
+				result?.data
+					? [
+						...result.data.map(({ id }) => ({ type: "Products", id })),
+						{ type: "Products", id: "LIST" },
+					]
+					: [{ type: "Products", id: "LIST" }],
+		}),
+		getProduct: builder.query({
+			query: (id) => `/products/${id}`,
+			providesTags: (result, error, id) => [{ type: "Products", id }],
+		}),
+		createProduct: builder.mutation({
+			query: (productData) => ({
+				url: "/products",
+				method: "POST",
+				body: productData,
+			}),
+			invalidatesTags: [{ type: "Products", id: "LIST" }],
+		}),
+		updateProduct: builder.mutation({
+			query: ({ id, ...productData }) => ({
+				url: `/products/${id}`,
+				method: "PUT",
+				body: productData,
+			}),
+			invalidatesTags: (result, error, { id }) => [
+				{ type: "Products", id },
+				{ type: "Products", id: "LIST" },
+			],
+		}),
+		deleteProduct: builder.mutation({
+			query: (id) => ({
+				url: `/products/${id}`,
+				method: "DELETE",
+			}),
+			invalidatesTags: [{ type: "Products", id: "LIST" }],
+		}),
 	}),
-	tagTypes: ["Auth"],
 });
 
-export const { useLoginMutation, useRegisterMutation, useLogoutMutation } =
-	apiSlice;
+export const {
+	useLoginMutation,
+	useRegisterMutation,
+	useLogoutMutation,
+	useGetProductsQuery,
+	useGetProductQuery,
+	useCreateProductMutation,
+	useUpdateProductMutation,
+	useDeleteProductMutation,
+} = apiSlice;
