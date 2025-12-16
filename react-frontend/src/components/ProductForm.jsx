@@ -15,10 +15,9 @@ const ProductForm = ({
     const [formData, setFormData] = useState(initialValues);
     const [errors, setErrors] = useState({});
 
-    // Update form when initial values change (for edit mode)
     useEffect(() => {
         setFormData(initialValues);
-    }, [initialValues]);
+    }, [JSON.stringify(initialValues)]);
 
     const validateForm = () => {
         const newErrors = {};
